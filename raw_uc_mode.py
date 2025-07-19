@@ -13,5 +13,5 @@ with SB(uc=True, test=True) as sb:
     sb.sleep(2)
     sb.uc_gui_handle_captcha()
 
-    while(sb.is_element_present(video#video-player)):
+    while(sb.is_element_present('video#video-player')):
         sb.sleep(10)
