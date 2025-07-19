@@ -1,9 +1,7 @@
-name: CI build 3 - (Ubuntu)
+name: CI build 1 - (Ubuntu)
 on:
   schedule:
-    - cron: "38 * * * *"
-  push:
-    branches: [ master ]
+    - cron: "*/5 * * * *"
   pull_request:
     branches:
   workflow_dispatch:
@@ -19,7 +17,7 @@ jobs:
       max-parallel: 1
       matrix:
         os: [ubuntu-latest]
-        python-version: ["3.13"]
+        python-version: ["3.12"]
 
     runs-on: ${{ matrix.os }}
     steps:
@@ -46,11 +44,6 @@ jobs:
         pip install -r requirements.txt
         pip install --upgrade pyautogui
         pip install --upgrade python-xlib
-    - name: Lint with flake8
-      run: |
-        pip install flake8
-        # Stop the build if there are flake8 issues
-        flake8 . --count --show-source --statistics --exclude=temp
     - name: Install Chrome
       if: matrix.os == 'ubuntu-20.04'
       run: |
@@ -76,12 +69,12 @@ jobs:
       run: |
         python -c "from seleniumbase.core import detect_b_ver; print(detect_b_ver.get_binary_location('google-chrome'))"
         python -c "from seleniumbase import undetected; print(undetected.find_chrome_executable())"
-    - name: Run python my_socialblade.py --debug
+    - name: Run python raw_uc_mode.py --debug
       run: |
-        python my_socialblade.py --debug
-    - name: Run python raw_nike.py --debug
-      run: |
-        python raw_nike.py --debug
-    - name: Run python raw_upwork_cdp_mode.py --debug
-      run: |
-        python raw_upwork_cdp_mode.py --debug
+        python raw_uc_mode.py --debug --screenshot
+    - name: Upload screenshots
+      uses: actions/upload-artifact@v4
+      with:
+        name: seleniumbase-screenshots
+        path: |
+          ./latest_logs/
